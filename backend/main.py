@@ -6,6 +6,11 @@ import time
 import pyttsx3
 import requests
 from mistralai import Mistral
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI()
 
@@ -19,13 +24,13 @@ app.add_middleware(
 )
 
 # Initialize Mistral API
-api_key = "11RZDmjfsCHWP2QIcJPc9GrZ9LLrVfb8"  # Replace with your Mistral API key
-model = "mistral-small-latest"
+api_key = os.getenv("MISTRAL_API_KEY")
+model = os.getenv("MISTRAL_MODEL", "mistral-small-latest")
 client = Mistral(api_key=api_key)
 
 # Supabase Config
-SUPABASE_URL = "https://wougyfejtrikufucnwen.supabase.co"  # Replace with your Supabase URL
-SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvdWd5ZmVqdHJpa3VmdWNud2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxOTQ2NTEsImV4cCI6MjA1NTc3MDY1MX0.qGlJhKSYaPICR7L1KMDDkmAFcagD7h-aCn3oYMxgiV4"  # Replace with your Supabase API Key
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_API_KEY = os.getenv("SUPABASE_API_KEY")
 
 # Store extracted PDF content
 document_text = ""
@@ -68,8 +73,8 @@ async def chat_with_pdf(request: QueryRequest):
 
     messages = [
         {"role": "user", "content": f"Based on this document: {document_text}\n"
-                                    f"Answer this question: {request.query}\n"
-                                    f"{level_prompt}"}
+                                        f"Answer this question: {request.query}\n"
+                                        f"{level_prompt}"}
     ]
 
     response = make_request(messages)
@@ -93,7 +98,7 @@ def get_chat_history():
     """Fetches the last 10 chat history records from Supabase."""
     headers = {"apikey": SUPABASE_API_KEY, "Authorization": f"Bearer {SUPABASE_API_KEY}"}
     response = requests.get(f"{SUPABASE_URL}/rest/v1/chats?select=user_query,ai_response&order=created_at.desc&limit=10", headers=headers)
-    
+
     if response.status_code == 200:
         return {"history": response.json()}
     return {"error": "Failed to fetch chat history"}
