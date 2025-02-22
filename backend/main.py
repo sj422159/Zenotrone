@@ -27,6 +27,9 @@ document_text = ""
 
 class QueryRequest(BaseModel):
     query: str
+@app.route('/')
+def home():
+    return "Flask server is running!"
 
 @app.post("/upload/")
 async def upload_pdf(file: UploadFile = File(...)):
