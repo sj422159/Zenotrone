@@ -18,27 +18,25 @@ app.add_middleware(
 )
 
 # Initialize Mistral API
-API_KEY = "11RZDmjfsCHWP2QIcJPc9GrZ9LLrVfb8"
-MODEL_NAME = "mistral-small-latest"
-client = Mistral(api_key=API_KEY)
+api_key = "11RZDmjfsCHWP2QIcJPc9GrZ9LLrVfb8"
+model = "mistral-small-latest"
+client = Mistral(api_key=api_key)
 
-document_text = ""  # Store extracted PDF content
+# Store extracted PDF content
+document_text = ""
 
 class QueryRequest(BaseModel):
     query: str
-
-@app.get("/")
+@app.route('/')
 def home():
-    return {"message": "FastAPI server is running!"}
+    return "Flask server is running!"
 
 @app.post("/upload/")
 async def upload_pdf(file: UploadFile = File(...)):
     global document_text
     try:
         reader = PdfReader(file.file)
-        document_text = "\n".join(
-            [page.extract_text() for page in reader.pages if page.extract_text()]
-        )
+        document_text = "\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
         return {"message": "PDF processed successfully", "summary": summarize_pdf()}
     except Exception as e:
         return {"error": str(e)}
@@ -62,11 +60,11 @@ def summarize_pdf():
 def make_request(messages):
     while True:
         try:
-            chat_response = client.chat.complete(model=MODEL_NAME, messages=messages)
+            chat_response = client.chat.complete(model=model, messages=messages)
             return chat_response.choices[0].message.content.strip()
         except Exception as e:
             if "429" in str(e):
-                time.sleep(5)  # Retry after rate limit delay
+                time.sleep(5)
             else:
                 return str(e)
 
