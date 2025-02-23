@@ -1,8 +1,8 @@
-flask
-flask-cors
+fastapi
 uvicorn
-mistralai
+mangum
 pypdf
-speechrecognition
 pyttsx3
-streamlit
+requests
+python-dotenv
+mistralai

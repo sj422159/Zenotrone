@@ -8,6 +8,8 @@ import requests
 from mistralai import Mistral
 import os
 from dotenv import load_dotenv
+from pydantic import BaseModel
+
 
 # Load environment variables
 load_dotenv()
@@ -23,14 +25,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize Mistral API
-api_key = os.getenv("MISTRAL_API_KEY")
-model = os.getenv("MISTRAL_MODEL", "mistral-small-latest")
+api_key = "11RZDmjfsCHWP2QIcJPc9GrZ9LLrVfb8"
+model = "mistral-small-latest"
 client = Mistral(api_key=api_key)
 
-# Supabase Config
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_API_KEY = os.getenv("SUPABASE_API_KEY")
+SUPABASE_URL = "https://wougyfejtrikufucnwen.supabase.co"
+
+SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzNjQwNjYwOCwiZXhwIjoxOTUxOTgyNjA4fQ.7"
 
 # Store extracted PDF content
 document_text = ""
@@ -39,6 +40,10 @@ document_text = ""
 class QueryRequest(BaseModel):
     query: str
     education_level: str  # Undergraduate, Graduate, Masters, Specialist
+
+class ChatRequest(BaseModel):
+    query: str
+    mode: str  # Options: "funny", "supportive", "sarcastic"
 
 @app.get("/")
 def home():
@@ -103,6 +108,38 @@ def get_chat_history():
         return {"history": response.json()}
     return {"error": "Failed to fetch chat history"}
 
+@app.post("/chat/")
+async def chat_best_friend(request: ChatRequest):
+    """Acts like a best friend and responds based on Funny, Supportive, or Sarcastic mode."""
+    mode_responses = {
+        "funny": "Respond in a hilarious, light-hearted way like a best friend cracking jokes.",
+        "supportive": "Give comforting words, mental health advice, and meditation techniques like a caring best friend.",
+        "sarcastic": "Respond in a witty, savage, and slightly mocking way like a best friend roasting you but in a fun way."
+    }
+
+    mode_prompt = mode_responses.get(request.mode.lower(), "Be a supportive and friendly chatbot.")
+
+    messages = [
+        {"role": "user", "content": f"{mode_prompt}\nUser: {request.query}"}
+    ]
+
+    response = make_request(messages)
+
+    return {"response": response}
+
+
+def retrieve_relevant_context(query):
+    """Finds the most relevant document chunks using cosine similarity."""
+    if not tfidf_matrix:
+        return ""
+    
+    query_vector = vectorizer.transform([query])
+    similarities = cosine_similarity(query_vector, tfidf_matrix).flatten()
+    top_indices = np.argsort(similarities)[-3:][::-1]  # Get top 3 relevant sentences
+    
+    relevant_text = " ".join([document_chunks[i] for i in top_indices])
+    return relevant_text
+
 def save_chat_to_supabase(question, response):
     """Stores chat history in Supabase."""
     headers = {
@@ -130,3 +167,6 @@ def text_to_speech(text: str):
     engine = pyttsx3.init()
     engine.say(text)
     engine.runAndWait()
+
+
+
