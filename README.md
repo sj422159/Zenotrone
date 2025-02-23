@@ -1,8 +1,8 @@
-﻿# Zenotrone- MindMentor
- # **Generative AI Chatbot - Project Documentation**
+# **MindMentor- Zenotrone 
+PDF AI Chatbot - Project Documentation**
 
 ## **Introduction**
-This project is a FastAPI-based AI chatbot that allows users to upload PDFs, ask questions about the content, and receive AI-generated responses based on their education level. The chatbot uses a **Retrieval-Augmented Generation (RAG) system** with **Mistral AI** and **PostgreSQL (Supabase)** to enhance response accuracy and context relevance.
+This project is a FastAPI-based AI chatbot that allows users to upload PDFs, ask questions about the content, and receive AI-generated responses based on their education level. The chatbot uses a **Retrieval-Augmented Generation (RAG) system** with **Mistral AI** and **PostgreSQL (Supabase)** to enhance response accuracy and context relevance. Additionally, it features a **multi-personality AI** integrated alongside the doubt solver, allowing users to interact with AI personalities tailored to different tones and engagement styles.
 
 ---
 
@@ -12,6 +12,7 @@ This project is a FastAPI-based AI chatbot that allows users to upload PDFs, ask
 - **AI-Based Q&A**: Answers user queries based on PDF content.
 - **Retrieval-Augmented Generation (RAG)**: Enhances AI responses by retrieving relevant document sections from PostgreSQL.
 - **Education-Level Customization**: Adjusts explanations for Undergraduate, Graduate, Masters, or Specialist users.
+- **Multi-Personality AI**: Allows users to select different AI personalities for engagement.
 - **Chat History Storage**: Saves user queries and AI responses in PostgreSQL (Supabase).
 - **Chat History Retrieval**: Allows users to fetch past interactions.
 - **Text-to-Speech (Optional)**: Converts AI responses into speech.
@@ -24,6 +25,7 @@ This project is a FastAPI-based AI chatbot that allows users to upload PDFs, ask
 - **Database**: PostgreSQL (Supabase)
 - **PDF Processing**: PyPDF
 - **Vector Storage**: FAISS (for RAG implementation)
+- **Multi-Personality AI Engine**: Custom Personality Framework
 - **Speech Synthesis**: Pyttsx3
 - **API Requests**: Requests Library
 
@@ -104,6 +106,22 @@ The server will start at `http://127.0.0.1:8000`
 }
 ```
 
+### **6. Select AI Personality**
+- **Endpoint:** `POST /select_personality/`
+- **Description:** Allows users to select an AI personality for interaction.
+- **Request:**
+```json
+{
+  "personality": "friendly"
+}
+```
+- **Response:**
+```json
+{
+  "message": "Personality set to friendly."
+}
+```
+
 ---
 
 ## **Workflow Overview**
@@ -117,6 +135,8 @@ The server will start at `http://127.0.0.1:8000`
   - Retrieve relevant document sections using FAISS & PostgreSQL.
   - Modify prompt & get AI response.
   - Store chat history in PostgreSQL.
+- **Select AI Personality (`/select_personality/`)**
+  - Allow users to customize AI interaction style.
 - **Retrieve Data**
   - Fetch summary (`/summarize/`).
   - Fetch chat history (`/history/`).
@@ -129,6 +149,4 @@ The server will start at `http://127.0.0.1:8000`
 - **Enhance UI with a frontend framework like React or Vue.js.**
 - **Optimize query response time with better indexing techniques.**
 - **Add multi-user authentication for personalized chat history.**
-
-
-# Zenotrone
+- **Expand AI personality options for more dynamic user interactions.**
