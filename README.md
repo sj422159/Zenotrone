@@ -1,5 +1,5 @@
 # **MindMentor- Zenotrone**
-## **Generative AI Chatbot - Project Documentation**
+## **Generative AI Chatbot -Doubt Solver Project Documentation**
 
 ## **Introduction**
 This project is a FastAPI-based AI chatbot that allows users to upload PDFs, ask questions about the content, and receive AI-generated responses based on their education level. The chatbot uses a **Retrieval-Augmented Generation (RAG) system** with **Mistral AI** and **PostgreSQL (Supabase)** to enhance response accuracy and context relevance. Additionally, it features a **multi-personality AI** integrated alongside the doubt solver, allowing users to interact with AI personalities tailored to different tones and engagement styles.
