@@ -7,7 +7,6 @@ import pyttsx3
 from mistralai import Mistral
 
 app = FastAPI()
-
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
